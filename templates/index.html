@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 90%;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Salary Predictor</h1>
+        <form id="salary-form">
+            <input type="text" id="job-id" name="posting_id" placeholder="Enter Job Posting ID" required />
+            <button type="submit">Fetch Salary</button>
+        </form>
+        <div class="output" id="output"></div>
+    </div>
+    <script>
+        const form = document.getElementById('salary-form');
+        const outputDiv = document.getElementById('output');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            outputDiv.innerHTML = "Fetching salary...";
+
+            const postingId = document.getElementById('job-id').value;
+
+            try {
+                const response = await fetch(`/predict/salary/${postingId}`, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    outputDiv.innerHTML = `Predicted Salary: $${data.predicted_salary}`;
+                } else {
+                    const error = await response.json();
+                    outputDiv.innerHTML = `<span style="color: red;">Error: ${error.error}</span>`;
+                }
+            } catch (error) {
+                outputDiv.innerHTML = `<span style="color: red;">Error fetching salary. Please try again.</span>`;
+            }
+        });
+    </script>
+</body>
+</html>
